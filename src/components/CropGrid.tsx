@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
-import { crops, tamilNaduDistricts, regionCrops, Crop } from '@/data/cropData';
+import { crops, tamilNaduDistricts, regionCrops, Crop, SoilType } from '@/data/cropData';
 import CropCard from './CropCard';
-import { Sprout, Loader2 } from 'lucide-react';
+import { Sprout } from 'lucide-react';
 
 interface CropGridProps {
   location: {
@@ -11,9 +11,10 @@ interface CropGridProps {
     district?: string;
   } | null;
   onCropSelect: (crop: Crop) => void;
+  selectedSoilType?: SoilType | null;
 }
 
-const CropGrid = ({ location, onCropSelect }: CropGridProps) => {
+const CropGrid = ({ location, onCropSelect, selectedSoilType }: CropGridProps) => {
   const topCrops = useMemo(() => {
     if (!location) return [];
 
@@ -26,7 +27,6 @@ const CropGrid = ({ location, onCropSelect }: CropGridProps) => {
     }
     // Tamil Nadu with only region selected
     else if (location.state === 'Tamil Nadu' && location.region) {
-      // Map region IDs to zone names
       const zoneMap: Record<string, string> = {
         'cauvery': 'Cauvery Delta Zone',
         'western': 'Western Zone',
@@ -48,11 +48,19 @@ const CropGrid = ({ location, onCropSelect }: CropGridProps) => {
       cropIds = Object.keys(crops).slice(0, 10);
     }
 
-    return cropIds
+    let filteredCrops = cropIds
       .map(id => crops[id])
-      .filter(Boolean)
-      .slice(0, 10);
-  }, [location]);
+      .filter(Boolean);
+
+    // Filter by soil type if selected
+    if (selectedSoilType) {
+      filteredCrops = filteredCrops.filter(crop => 
+        crop.soilCategories?.includes(selectedSoilType)
+      );
+    }
+
+    return filteredCrops.slice(0, 10);
+  }, [location, selectedSoilType]);
 
   if (!location || (!location.region && !location.district)) {
     return (
