@@ -1,4 +1,5 @@
-import { Crop } from '@/data/cropData';
+import { useState, useEffect } from 'react';
+import { Crop, getCropImage } from '@/data/cropData';
 import { Droplets, Calendar, TrendingUp, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
@@ -9,6 +10,13 @@ interface CropCardProps {
 }
 
 const CropCard = ({ crop, rank, onClick }: CropCardProps) => {
+  const [currentImage, setCurrentImage] = useState(crop.image);
+
+  // Randomly select image on mount
+  useEffect(() => {
+    setCurrentImage(Math.random() > 0.5 ? crop.image : crop.imageAlt);
+  }, [crop.id]);
+
   const waterColors = {
     low: 'bg-risk-low',
     medium: 'bg-risk-medium',
@@ -45,12 +53,12 @@ const CropCard = ({ crop, rank, onClick }: CropCardProps) => {
       {/* Crop Image */}
       <div className="relative h-40 overflow-hidden">
         <img
-          src={crop.image}
+          src={currentImage}
           alt={crop.name}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
           onError={(e) => {
             const target = e.target as HTMLImageElement;
-            target.src = '/placeholder.svg';
+            target.src = crop.image;
           }}
         />
         <div className="absolute inset-0 bg-gradient-to-t from-card via-transparent to-transparent" />
@@ -95,6 +103,11 @@ const CropCard = ({ crop, rank, onClick }: CropCardProps) => {
             <span className="capitalize">{overallRisk} risk</span>
           </div>
         </div>
+
+        {/* 3-Line Description */}
+        <p className="text-xs text-muted-foreground line-clamp-2 mb-3">
+          {crop.fullDescription?.[0] || crop.description}
+        </p>
 
         {/* Seasons */}
         <div className="flex flex-wrap gap-1.5">
