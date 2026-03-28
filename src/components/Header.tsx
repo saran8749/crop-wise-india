@@ -1,4 +1,5 @@
 import { Leaf, Sprout } from 'lucide-react';
+import UserMenu from './UserMenu';
 
 const Header = () => {
   return (
