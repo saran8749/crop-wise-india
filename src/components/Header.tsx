@@ -1,4 +1,5 @@
 import { Leaf, Sprout } from 'lucide-react';
+import UserMenu from './UserMenu';
 
 const Header = () => {
   return (
@@ -11,6 +12,9 @@ const Header = () => {
       </div>
 
       <div className="container mx-auto relative">
+        <div className="absolute top-0 right-0">
+          <UserMenu />
+        </div>
         <div className="flex items-center gap-4 mb-4">
           <div className="p-3 rounded-2xl bg-white/10 backdrop-blur-sm border border-white/20 animate-float">
             <Sprout className="w-10 h-10" />
