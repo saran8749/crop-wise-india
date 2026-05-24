@@ -1055,3 +1055,14 @@ export const marketPrices: Record<string, MarketPrice[]> = {
 export const getCropImage = (crop: Crop): string => {
   return Math.random() > 0.5 ? crop.image : crop.imageAlt;
 };
+
+// Dynamically prefix crop image paths with the correct base path for subpath deployments (e.g. GitHub Pages)
+const prefix = import.meta.env.BASE_URL.replace(/\/$/, "");
+Object.values(crops).forEach(crop => {
+  if (crop.image && crop.image.startsWith("/")) {
+    crop.image = `${prefix}${crop.image}`;
+  }
+  if (crop.imageAlt && crop.imageAlt.startsWith("/")) {
+    crop.imageAlt = `${prefix}${crop.imageAlt}`;
+  }
+});
